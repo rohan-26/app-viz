@@ -87,7 +87,7 @@ with tab2:
   # Create a heatmap to show correlations between variables in the dataset
   fig, ax = plt.subplots(figsize=(width1, width1))
   df1 = df[["Hwt", "Bwt",]]
-  sns.heatmap(filtered_df.corr(), cmap=sns.cubehelix_palette(8), annot=True, ax=ax)
+  sns.heatmap(df1.corr(), cmap=sns.cubehelix_palette(8), annot=True, ax=ax)
   tab2.write(fig)
   df2 = df
   st.markdown("### Pairplot")
