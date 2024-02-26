@@ -94,9 +94,10 @@ with tab2:
   tab2.subheader("Correlation Tab 📉")
   # Create a heatmap to show correlations between variables in the dataset
   fig, ax = plt.subplots(figsize=(width1, width1))
-  sns.heatmap(DF.corr())
+  New_DF = 
+  sns.heatmap(DF.corr(), cmap=sns.cubehelix_palette(8), annot=True, ax=ax)
   tab2.write(fig)
-  df2 = df
+  df2 = DF[["Sex_Int", "Hwt", "Bwt]]
   st.markdown("### Pairplot")
   fig3 = sns.pairplot(df2)
   st.pyplot(fig3)
