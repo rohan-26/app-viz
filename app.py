@@ -28,9 +28,6 @@ from PIL import Image
 # Altair is a declarative statistical visualization library for Python.
 import altair as alt
 
-import sys
-sys.path.append("/path/to/scikit-learn/")
-
 # Set the title for the Streamlit app >>>>>>>>>>>>
 st.title("Cats")
 
