@@ -59,7 +59,7 @@ filtered_df = df[(df['Hwt'] >= hwt_min) & (df['Hwt'] <= hwt_max) & (df['Bwt'] >=
 
 # Dropdown menu for selecting which variable from the dataset to predict
 list_variables = df.columns
-select_variable =  st.sidebar.selectbox('🎯 Select Variable to Predict',list_variables)
+#select_variable =  st.sidebar.selectbox('🎯 Select Variable to Predict',list_variables)
 
 # Display a header for the Visualization section
 st.markdown("## Visualization")
@@ -72,6 +72,14 @@ width1 = st.sidebar.slider("plot width", 1, 25, 10)
 
 # Create tabs for different types of visualizations
 tab1, tab2, tab3, tab4= st.tabs(["Line and Bar Charts ", "📈 Correlation", "A Description", "Predict Values"])
+
+DF = df[["Sex", "Hwt", "Bwt"]]
+
+Map = {"M":0, "F":1}
+DF["Sex_Int"] = DF["Sex"].map(Map)
+
+X = DF[["Sex_Int", "Hwt"]]
+y = DF["Bwt"]
 
 # Content for the "Line and Bar Charts" tab
 with tab1:
@@ -86,7 +94,7 @@ with tab2:
   tab2.subheader("Correlation Tab 📉")
   # Create a heatmap to show correlations between variables in the dataset
   fig, ax = plt.subplots(figsize=(width1, width1))
-  #sns.heatmap(df.corr(), cmap=sns.cubehelix_palette(8), annot=True, ax=ax)
+  sns.heatmap(DF.corr(), cmap=sns.cubehelix_palette(8), annot=True, ax=ax)
   tab2.write(fig)
   df2 = df
   st.markdown("### Pairplot")
@@ -101,12 +109,22 @@ with tab3:
   st.markdown("## A description of the dataset")
   st.dataframe(df.describe(include='all'))
 
+  import sweetviz as sv
+  report = sv.analyze(df)
+  report.show_html("report.html")
+
+  #Display the Sweetviz report
+  if st.button("Generate Report"):
+    import streamlit.components.v1 as components
+    st.title("Sweetviz Report of the Data")
+    report_path = "report.html"
+    HtmlFile = open(report_path, "r", encoding="utf-8")
+    source_code = HtmlFile.read()
+    components.html(source_code, height = 1000, width = 1000)
+
+
 # Content for the "Predict Values" tab
 with tab4:
-  DF = df[["Hwt", "Bwt"]]
-
-  X = DF["Hwt"]
-  y = DF["Bwt"]
 
   from sklearn.model_selection import train_test_split
 
@@ -121,33 +139,21 @@ with tab4:
 
   coeff_df = pd.DataFrame(lr.coef_, X.columns, columns=['Coefficient'])
 
+  st.set_option('deprecation.showPyplotGlobalUse', False)
   plt.figure(figsize=(10,7))
   plt.title("Actual vs. predicted weights",fontsize=25)
   plt.xlabel("Actual test set weights",fontsize=18)
   plt.ylabel("Predicted weights", fontsize=18)
   plt.scatter(x=y_test,y=pred)
+  st.pyplot()
 
   from sklearn import metrics
 
-  print("The mean absolute error between the predicted weights and the actual weights is:", metrics.mean_absolute_error(y_test,pred))
-  print("The mean squared error between the predicted weights and the actual weights is:", metrics.mean_squared_error(y_test,pred))
+  st.write("The mean absolute error between the predicted weights and the actual weights is:", metrics.mean_absolute_error(y_test,pred))
+  st.write("The mean squared error between the predicted weights and the actual weights is:", metrics.mean_squared_error(y_test,pred))
 
   from sklearn.metrics import r2_score
 
-  print("The model predicts the relationship between the heights and the weights to an accuracy of about : ", end=" ")
+  st.write("The model predicts the relationship between the heights and the weights to an accuracy of about : ", end=" ")
   r2_score(y_test,pred,multioutput='variance_weighted') * 100
-  
-
-
-import sweetviz as sv
-report = sv.analyze(df)
-report.show_html("report.html")
-
-# Display the Sweetviz report
-if st.button("Generate Report"):
-  import streamlit.components.v1 as components
-  st.title("Sweetviz Report of the Data")
-  report_path = "report.html"
-  HtmlFile = open(report_path, "r", encoding="utf-8")
-  source_code = HtmlFile.read()
-  components.html(source_code, height = 1000, width = 1000)
+  st.write("%")
