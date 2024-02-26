@@ -6,6 +6,8 @@ pillow
 sweetviz
 plotly
 scikit-learn
+sklearn.model_selection
+sklearn.linear_model
 
 
 
