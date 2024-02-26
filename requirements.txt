@@ -5,7 +5,7 @@ seaborn
 pillow
 sweetviz
 plotly
-sklearn
+scikit-learn
 
 
 
